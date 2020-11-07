@@ -15,26 +15,42 @@
 	html {
 		display: flex;
 		align-items: center;
+		align-content: center;
+		flex-direction: column;
 		justify-content: center;
 		margin: 0;
 		padding: 0;
 		width: 100%;
 		height: 100%;
+		font-size: 2em;
+	}
+
+	body {
+		display: flex;
+		align-items: center;
+		align-content: center;
+		justify-content: center;
+		flex-direction: column;
 	}
 
 	div {
 		border: 1px solid black;
 		display: inline-block;
-		padding: 30px;
+		padding: 3em;
 	}
 
 	.num_val {
 		margin: 0 0 5px 0;
-		width: 65px;
+		width: 4em;
+		font-size: 1em;
 	}
 
 	p {
 		text-align: center;
+	}
+
+	select {
+		font-size: 1em;
 	}
 </style>
 
@@ -44,8 +60,9 @@ window.addEventListener('load', () => {
 	const price = document.getElementById('price');
 	const mpg = document.getElementById('mpg');
 	const miles = document.getElementById('miles_left');
-	const output = document.getElementById('output');
-	const button = document.getElementById('button');
+	const slider = document.getElementById('slider');
+	const percent = document.getElementById('percent');
+	const final_cost = document.getElementById('final_cost');
 
 	function val(obj) {
 		return +obj.value;
@@ -53,40 +70,44 @@ window.addEventListener('load', () => {
 
 	function calc(fmt = 'USD') {
 		const gal_left = val(miles) / val(mpg);
-		const gal_needed = val(tank) - gal_left;
+		const tank_wanted = val(slider) / 100 * val(tank);
+		const gal_needed = tank_wanted - gal_left;
 
-		out(val(price) * gal_needed);
+		out(val(slider), val(price) * gal_needed);
 	}
 
-	function out(price, fmt) {
-		output.innerHTML = `${toSymb(fmt)}${Math.round(100*price) / 100}`;
+	function out(percentage, price, fmt) {
+		const p = `${percentage}%`;
+		const c = `$${Math.round(100*price) / 100}`;
+
+		percent.innerHTML = p;
+		final_cost.innerHTML = c;
 	}
 
-	function toSymb(fmt) {
-		switch(fmt) {
-			default:
-				return '$';
-		}
-	}
-
-	button.addEventListener('click', e => {
-		e.preventDefault();
-		calc();
-	});
+	slider.addEventListener('input', e => calc());
 });
 </script>
 </head>
 
 <body>
+	<span style="margin-bottom: 0.5em;">
+		<label for="cars">Choose a car:</label>
+		<select name="car_year" id="car_year">
+			<option value="2014">2014</option>
+		</select>
+		<select name="car_model" id="car_model">
+			<option value="honda_civic">Honda Civic</option>
+		</select>
+	</span>
 	<div>
-		<label>Tank Size:&nbsp;&nbsp;</label><input class="num_val" type="number" name="tank" id="tank" autocomplete="on" value="13.2" min="0" step="0.01"><br>
-		<label>Gas Price:&nbsp;&nbsp;</label><input class="num_val" type="number" name="price" id="price" autocomplete="on"  min="0" step="0.001"><br>
-		<label>MPG:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input class="num_val" type="number" name="mpg" id="mpg" autocomplete="on" min="0" step="0.01"><br>
-		<label>Miles Left:&nbsp;</label><input class="num_val" type="number" name="miles_left" id="miles_left" min="0" step="0.01"><br>
+		<label>Tank Size:&nbsp;&nbsp;</label><input class="num_val" type="number" name="tank" id="tank" autocomplete="on" value="13.2" min="0" step="0.01">gal<br>
+		<label>Gas Price:&nbsp;$</label><input class="num_val" type="number" name="price" id="price" autocomplete="on"  min="0" step="0.001"><br>
+		<label>MPG:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input class="num_val" type="number" name="mpg" id="mpg" autocomplete="on" min="0" step="0.01">mi/gal<br>
+		<label>Miles Left:&nbsp;</label><input class="num_val" type="number" name="miles_left" id="miles_left" min="0" step="0.01">mi<br>
 		<br>
-		<input type="submit" value="Calculate Fill Cost!" id="button">
+		<input type="range" min="0" max="100" value="100" step="1" id="slider" style="width: 100%;">
 	</div>
 
-	<p>Fill 'er up with... <span id="output"></span></p>
+	<p>Fill 'er <span id="percent"></span> up with... <span id="final_cost"></span></p>
 </body>
 </html>
