@@ -13,6 +13,8 @@
 	}
 
 	html {
+		background-color: black;
+		color: white;
 		display: flex;
 		align-items: center;
 		align-content: center;
@@ -32,12 +34,6 @@
 		align-content: center;
 		justify-content: center;
 		flex-direction: column;
-	}
-
-	div {
-		border: 1px solid black;
-		display: inline-block;
-		padding: 2em;
 	}
 
 	.num_val {
@@ -121,7 +117,7 @@ window.addEventListener('load', () => {
 			<option value="honda_civic">Honda Civic</option>
 		</select>
 	</span>
-	<div>
+	<div style="border: 1px solid white; display: inline-block; padding: 2em;">
 		<label>Tank Size:&nbsp;&nbsp;</label><input class="num_val" type="number" name="tank" id="tank" autocomplete="on" value="13.2" min="0" step="0.01">gal<br>
 		<label>Gas Price:&nbsp;$</label><input class="num_val" type="number" name="price" id="price" autocomplete="on"  min="0" step="0.001"><br>
 		<label>MPG:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input class="num_val" type="number" name="mpg" id="mpg" autocomplete="on" min="0" step="0.01">mi/gal<br>
