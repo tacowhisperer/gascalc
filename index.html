@@ -67,10 +67,94 @@
 
 	select {
 		font-size: 1em;
+		margin-right: 0.5em;
 	}
 </style>
 
 <script type="text/javascript">
+const BY_METER = 0;
+const BY_MPG = 1;
+
+const DATABASE = {
+	'1990': {
+		'Ford': {'Crown Victoria': BY_METER}
+	},
+
+	'2000': {
+		'Chevy': {'Malibu': BY_METER}
+	},
+
+	'2014': {
+		'Honda': {'Civic': BY_MPG}
+	}
+};
+
+/**
+ * Converts a database into a functional selection DOM element.
+ */
+function db2menu(database) {
+	const DB = database;
+
+	const yearSelect = document.createElement('select');
+	const makeSelect = document.createElement('select');
+	const modelSelect = document.createElement('select');
+
+	yearSelect.innerHTML = '<option value=""></option>';
+
+	for (let yyyy in DB) {
+		const year = yyyy;
+		
+		const option = document.createElement('option');
+		option.setAttribute('value', year);
+		option.innerHTML = `${year}`;
+
+		yearSelect.appendChild(option);
+	}
+
+	yearSelect.addEventListener('input', e => {
+		makeSelect.innerHTML = '<option value=""></option>';
+		modelSelect.innerHTML = '<option value=""></option>';
+
+		for (let mmmm in DB[yearSelect.value]) {
+			const make = mmmm;
+
+			const option = document.createElement('option');
+			option.setAttribute('value', make);
+			option.innerHTML = `${make}`;
+
+			makeSelect.appendChild(option);
+		}
+	});
+
+	makeSelect.addEventListener('input', e => {
+		modelSelect.innerHTML = '<option value=""></option>';
+
+		for (let oooo in DB[yearSelect.value][makeSelect.value]) {
+			const model = oooo;
+
+			const option = document.createElement('option');
+			option.setAttribute('value', model);
+			option.innerHTML = `${model}`;
+
+			modelSelect.appendChild(option);
+		}
+	});
+
+	modelSelect.addEventListener('input', e => {
+		const year = yearSelect.value;
+		const make = makeSelect.value;
+		const model = modelSelect.value;
+
+		// TODO: Code here.
+	});
+
+	return {
+		year: yearSelect,
+		make: makeSelect,
+		model: modelSelect
+	}
+}
+
 window.addEventListener('load', () => {
 	const tank = document.getElementById('tank');
 	const price = document.getElementById('price');
@@ -121,19 +205,30 @@ window.addEventListener('load', () => {
 	}
 
 	slider.addEventListener('input', exec);
+
+	const carSelector = document.getElementById('car_selector');
+	const selectors = db2menu(DATABASE);
+
+	carSelector.appendChild(selectors.year);
+	carSelector.appendChild(selectors.make);
+	carSelector.appendChild(selectors.model);
+
+	const populate = new Event('change');
+	for (let selector in selectors)
+		selectors[selector].dispatchEvent(populate);
 });
 </script>
 </head>
 
 <body>
-	<span style="margin-bottom: 0.5em;">
+	<span style="margin-bottom: 0.5em;" id="car_selector">
 		<label for="cars">Choose a car:</label>
-		<select name="car_year" id="car_year">
+		<!--<select name="car_year" id="car_year">
 			<option value="2014">2014</option>
 		</select>
 		<select name="car_model" id="car_model">
 			<option value="honda_civic">Honda Civic</option>
-		</select>
+		</select>-->
 	</span>
 	<div style="border: 1px solid white; display: inline-block; padding: 2em;">
 		<label>Tank Size:&nbsp;&nbsp;</label><input class="num_val" type="number" name="tank" id="tank" autocomplete="on" value="13.2" min="0" step="0.01">gal<br>
